@@ -7,7 +7,7 @@ with open('README.rst') as ff:
 
 setup(
     name='tox-conda',
-    version='0.1.0',
+    version='0.2.0.dev',
     description='Tox plugin that provides integration with conda',
     long_description=readme,
     author="Daniel R. D'Avella",
