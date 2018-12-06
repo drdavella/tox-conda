@@ -26,5 +26,5 @@ setup(
     ],
     install_requires=['tox'],
     python_requires='>=3.3',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
 )
