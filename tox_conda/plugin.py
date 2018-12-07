@@ -53,6 +53,12 @@ def tox_addoption(parser):
         help="each line specifies a conda channel"
     )
 
+    parser.add_testenv_attribute(
+        name="use_conda",
+        type="bool",
+        default=True,
+        help="set to False to use default environment instead of conda"
+    )
 
 @hookimpl
 def tox_configure(config):
@@ -61,8 +67,9 @@ def tox_configure(config):
     # the conda dependencies when it decides whether an existing environment
     # needs to be updated before being used
     for _, envconfig in config.envconfigs.items():
-        conda_deps = [DepConfig(str(name)) for name in envconfig.conda_deps]
-        envconfig.deps.extend(conda_deps)
+        if envconfig.use_conda:
+            conda_deps = [DepConfig(str(name)) for name in envconfig.conda_deps]
+            envconfig.deps.extend(conda_deps)
 
 
 def find_conda():
@@ -96,6 +103,9 @@ def venv_lookup(self, name):
 
 @hookimpl
 def tox_testenv_create(venv, action):
+
+    if not venv.envconfig.use_conda:
+        return
 
     venv.session.make_emptydir(venv.path)
     basepath = venv.path.dirpath()
@@ -145,6 +155,9 @@ def install_conda_deps(venv, action, basepath, envdir):
 
 @hookimpl
 def tox_testenv_install_deps(venv, action):
+
+    if not venv.envconfig.use_conda:
+        return
 
     basepath = venv.path.dirpath()
     envdir = venv.envconfig.envdir
